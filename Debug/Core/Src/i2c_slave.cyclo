@@ -1,0 +1,12 @@
+../Core/Src/i2c_slave.c:37:6:MX_I2C1_Init_Slave	2
+../Core/Src/i2c_slave.c:90:6:set_i2c_txdata	1
+../Core/Src/i2c_slave.c:95:6:wait_i2c_busy	2
+../Core/Src/i2c_slave.c:101:6:create_keychanged_irq_pulse	1
+../Core/Src/i2c_slave.c:109:6:HAL_I2C_ListenCpltCallback	1
+../Core/Src/i2c_slave.c:116:6:HAL_I2C_AddrCallback	3
+../Core/Src/i2c_slave.c:137:6:HAL_I2C_SlaveRxCpltCallback	1
+../Core/Src/i2c_slave.c:143:6:HAL_I2C_SlaveTxCpltCallback	1
+../Core/Src/i2c_slave.c:149:6:HAL_I2C_ErrorCallback	1
+../Core/Src/i2c_slave.c:158:6:I2C_Error_Handler	1
+../Core/Src/i2c_slave.c:166:6:I2C1_EV_IRQHandler	1
+../Core/Src/i2c_slave.c:171:6:I2C1_ER_IRQHandler	1

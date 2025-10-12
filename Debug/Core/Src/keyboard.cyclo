@@ -1,0 +1,9 @@
+../Core/Src/keyboard.c:88:16:is_lowercase	3
+../Core/Src/keyboard.c:98:16:is_uppercase	3
+../Core/Src/keyboard.c:108:13:to_capitalletter	3
+../Core/Src/keyboard.c:115:13:to_lowercase	1
+../Core/Src/keyboard.c:120:6:keyboard_find_key	13
+../Core/Src/keyboard.c:180:6:keyboard_row_test	2
+../Core/Src/keyboard.c:197:6:keyboard_init	3
+../Core/Src/keyboard.c:224:6:keyboard_scan	9
+../Core/Src/keyboard.c:277:9:keyboard_is_key_changed	1
