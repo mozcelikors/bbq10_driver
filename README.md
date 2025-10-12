@@ -3,7 +3,7 @@
 A fun weekend project to turn an **STM32F411CEU6 ("Black Pill")** into an **I²C slave device** that drives a **Blackberry Q10 keyboard** (BBQ10).  
 The firmware detects key presses, generates an interrupt pulse, and sends the pressed character over I²C when the master performs a read.
 
-> Developed by **@mozcelikors** in **November 2025**.
+> Developed by **@mozcelikors** in **October 2025**.
 > Special thanks to **@arturo182** and many people prior for reversing this keyboard. Details: [arturo182/BBQ10KBD](https://github.com/arturo182/BBQ10KBD)
 
 <p align="center">
