@@ -113,7 +113,7 @@ For testing, I integrated everything to Beagley-AI board that has TI J722S (Jaci
 
 ### Device tree Modifications
 
-```json
+```
   // Pin mux
   &main_pmx0
   {
@@ -136,3 +136,4 @@ For testing, I integrated everything to Beagley-AI board that has TI J722S (Jaci
     };
   };
   
+```
