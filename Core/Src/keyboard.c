@@ -26,6 +26,7 @@
 /* Definitions */
 #define NUM_COLS 5
 #define NUM_ROWS 7
+#define PRESS_AND_HOLD_COUNT 50
 
 /* Special characters */
 #define S_ALT    'a'
@@ -34,6 +35,7 @@
 #define S_LSHIFT 'l'
 #define S_RSHIFT 'r'
 #define S_UNUSED  0
+#define S_SYM    'c'
 
 /* Alt, Left shift, and Right shift Row/col */
 #define ROW_ALT     4
@@ -42,6 +44,8 @@
 #define COL_RSHIFT  2
 #define ROW_LSHIFT  6
 #define COL_LSHIFT  1
+#define ROW_SYM     2
+#define COL_SYM     0
 
 /* Port and pin definitions */
 GPIO_TypeDef* col_ports[NUM_COLS] = {GPIOA,      GPIOA,      GPIOA,       GPIOA,       GPIOA     };
@@ -54,7 +58,7 @@ uint16_t      row_pins[NUM_ROWS]  = {GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_12, GPIO_P
 const char key_mapping[NUM_ROWS][NUM_COLS] = {
     { 'Q',       'E',       'R',       'U',       'O'       },
     { 'W',       'S',       'G',       'H',       'L'       },
-    { S_UNUSED,  'D',       'T',       'Y',       'I'       },
+    { S_SYM,     'D',       'T',       'Y',       'I'       },
     { 'A',       'P',       S_RSHIFT,  S_ENTER,   S_BACK    },
     { S_ALT,     'X',       'V',       'B',       '$'       },
     { ' ',       'Z',       'C',       'N',       'M'       },
@@ -83,6 +87,9 @@ volatile char last_pressed_key = 0;
 volatile uint8_t alt_key_pressed = 0;
 volatile uint8_t rshift_key_pressed = 0;
 volatile uint8_t lshift_key_pressed = 0;
+
+uint8_t press_and_hold_active = 0;
+uint8_t caps_lock_mode = 0;
 
 /* Functions */
 static uint8_t is_lowercase(char c)
@@ -129,12 +136,13 @@ char keyboard_find_key()
                 // if alt, left shift, or right shift, we already set the flag in keyboard_scan()
                 if (key_mapping[r][c] == S_ALT ||
                     key_mapping[r][c] == S_RSHIFT ||
-                    key_mapping[r][c] == S_LSHIFT)
+                    key_mapping[r][c] == S_LSHIFT ||
+                    key_mapping[r][c] == S_SYM)
                 {
-                    return 0;
+                    return S_UNUSED;
                 }
 
-                if (alt_key_pressed)
+                else if (alt_key_pressed)
                 {
                     if (alt_key_mapping[r][c] != S_UNUSED)
                         key_pressed_end_result = alt_key_mapping[r][c];
@@ -145,7 +153,7 @@ char keyboard_find_key()
                     rshift_key_pressed = 0;
                     lshift_key_pressed = 0;
                 }
-                else if (rshift_key_pressed || lshift_key_pressed)
+                else if (rshift_key_pressed || lshift_key_pressed || caps_lock_mode)
                 {
                     if (is_lowercase(key_pressed_end_result))
                     {
@@ -223,6 +231,7 @@ void keyboard_init(void)
 
 void keyboard_scan(void)
 {
+    static uint8_t press_and_hold_ctr = 0;
     uint8_t new_state[NUM_ROWS][NUM_COLS] = {0};
     uint8_t any_key_pressed = 0;
 
@@ -251,9 +260,21 @@ void keyboard_scan(void)
         HAL_GPIO_WritePin(col_ports[c], col_pins[c], GPIO_PIN_SET);
     }
 
-    // If all keys are released (all zeros), do not mark as changed
+    // If all keys are released (all zeros), do not mark as changed (key_changed=0).
+    // At the same time, detect press_and_hold situation and register key (key_changed=1) if certain amount of holds have occured (press_and_hold_ctr > PRESS_AND_HOLD_COUNT)
     if (!any_key_pressed) {
         key_changed = 0;
+        press_and_hold_ctr = 0;
+        press_and_hold_active = 0;
+    }
+    else
+    {
+        press_and_hold_ctr++;
+        if (press_and_hold_ctr > PRESS_AND_HOLD_COUNT)
+        {
+            press_and_hold_active = 1;
+            key_changed = 1;
+        }
     }
 
     // If alt, rshift, or lshift is pressed, do not mark as changed
@@ -272,10 +293,18 @@ void keyboard_scan(void)
         key_changed = 0;
         lshift_key_pressed = 1;
     }
+    else if (key_state[ROW_SYM][COL_SYM])  // sym will activate caps lock mode
+    {
+        if(caps_lock_mode)
+            caps_lock_mode = 0;
+        else
+            caps_lock_mode = 1;
+
+        key_changed = 0;
+    }
 }
 
 uint8_t keyboard_is_key_changed()
 {
     return key_changed;
 }
-
