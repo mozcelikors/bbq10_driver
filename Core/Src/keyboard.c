@@ -301,6 +301,9 @@ void keyboard_scan(void)
             caps_lock_mode = 1;
 
         key_changed = 0;
+        
+        // Debounce caps lock mode to avoid toggling rapidly
+        HAL_Delay(500);
     }
 }
 

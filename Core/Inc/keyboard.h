@@ -26,8 +26,6 @@
 
 #include "stm32f4xx_hal.h"
 
-#define KEYBOARD_SCAN_INTERVAL_MS 10
-
 /* Keyboard States */
 // Following is volatile mostly because of live debugging purposes
 extern volatile char last_pressed_key;
