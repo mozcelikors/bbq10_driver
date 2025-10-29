@@ -60,7 +60,7 @@ int main(void)
             }
         }
 
-        HAL_Delay(KEYBOARD_SCAN_INTERVAL_MS); // debounce/scan interval
+        HAL_Delay(1); // debounce/scan interval
     }
 }
 
